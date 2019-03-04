@@ -18,7 +18,7 @@ class gifButton {
                 // delete with right click
                 event.preventDefault();
                 this.button.remove();
-                buttons.splice(buttons.indexOf(newButton.text()), 1);
+                subjects.splice(subjects.indexOf(this.name), 1);
                 updateButtons();
             })
             // add to #buttons section
@@ -36,13 +36,16 @@ class gifImg {
             .attr('src', animation)
             .on('click', this.pauseResume)
             .hide();
+        // tag them to each other
         this.stillImg[0].alter = this.playImg;
         this.playImg[0].alter = this.stillImg;
+        // add to #images
         $("#images").prepend(this.stillImg);
         $("#images").prepend(this.playImg);
     }
 
     pauseResume () {
+        // switch still for animated or vice versa
         $(this).hide();
         this.alter.show();
     }
@@ -54,7 +57,7 @@ $(document).ready (() => {
     // get button list from storage
     subjects = JSON.parse(localStorage.getItem('subjects'));
     // defaults if there is nothing in storage
-    if (subjects == null) subjects = ["cats", "dogs", "hamsters", "Star Wars", "cheetahs"]
+    if (subjects == null) subjects = ["cats", "dogs", "hamsters", "cheetahs", "pandas", "goats", "unicorns"];
     // generate initial buttons
     subjects.forEach((subject) => {
         buttons.push(new gifButton(subject));
@@ -88,9 +91,10 @@ function retrieveGifs(subject, number, offset) {
     "&offset=" + offset;
     // $("#images").empty();
     $.ajax(url, "GET").then ((response) => {
-        console.log(response);
-        response.data.forEach(element => {
-            console.log(element.images);
+        // console.log(response);
+        $("#images").prepend("<hr>");
+        response.data.forEach((element, i) => {
+            console.log("image " + i + ": ", element.images);
             new gifImg(element.images.fixed_height.url, element.images.fixed_height_still.url);
         });
     });
